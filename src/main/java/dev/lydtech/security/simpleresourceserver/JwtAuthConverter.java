@@ -24,16 +24,11 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         Collection<GrantedAuthority> authorities = Stream.concat(
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                 extractRealmRoles(jwt).stream()).collect(Collectors.toSet());
-        return new JwtAuthenticationToken(jwt, authorities, jwt.getClaim("preferred_username"));
+        return new JwtAuthenticationToken(jwt, authorities);
     }
 
     private Collection<? extends GrantedAuthority> extractRealmRoles(Jwt jwt) {
         Collection<String> authorities = jwt.getClaim("authorities");
-//        Collection<String> realmRoles;
-//        if (realmAccess == null
-//                || (realmRoles = (Collection<String>) realmAccess.get("roles")) == null) {
-//            return Set.of();
-//        }
         return authorities.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
